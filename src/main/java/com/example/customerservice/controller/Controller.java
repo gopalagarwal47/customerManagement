@@ -85,4 +85,56 @@ public class Controller {
         return  ResponseEntity.ok(customer);
     }
 
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CustomerModal> updateCustomer(
+            @PathVariable Long id,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String email,
+            @RequestParam String phone,
+            @RequestParam String address,
+            @RequestParam String birthDate,
+            @RequestParam(required = false) MultipartFile image
+    ) {
+        try {
+            String imagePath = null;
+
+            if (image != null && !image.isEmpty()) {
+                Path uploadPath = Paths.get("uploads/");
+                Files.createDirectories(uploadPath);
+
+                String filename = UUID.randomUUID() + "_" + image.getOriginalFilename();
+                Path filePath = uploadPath.resolve(filename);
+                Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                imagePath = "uploads/" + filename;
+            }
+
+            CustomerModal customer = CustomerModal.builder()
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .email(email)
+                    .phone(phone)
+                    .address(address)
+                    .birthDate(LocalDate.parse(birthDate))
+                    .image(imagePath) // can be null
+                    .build();
+
+            CustomerModal updated = customerService.update(id, customer);
+            return ResponseEntity.ok(updated);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
+        customerService.delete(id);
+        return ResponseEntity.ok("Deleted successfully");
+    }
+
+
 }
