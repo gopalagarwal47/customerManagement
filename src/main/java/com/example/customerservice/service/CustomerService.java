@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
-
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -20,18 +21,17 @@ public class CustomerService implements Serviceinterface{
 
     @Override
     public CustomerModal findById(long id) {
-        return repository.findById(id);
-    }
-
-    public customerModal getAllCustomers(){
-        return repository.findAllCustomers()
+        return repository.findById(id).orElse(null);
     }
 
     @Override
+    public List<CustomerModal> getAllCustomers() {
+        return repository.findAllCustomers();
+    }
+    @Override
     public CustomerModal create(CustomerModal customer) {
         repository.insertCustomer(customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getImage(), customer.getPhone(), customer.getAddress(), customer.getBirthDate());
-        // Workaround: you could return last inserted by `SELECT LAST_INSERT_ID()` logic if needed
-        return customer;
+        return repository.findLatestInsertedCustomerByEmail(customer.getEmail());
     }
 
     @Override
@@ -39,12 +39,16 @@ public class CustomerService implements Serviceinterface{
         Optional<CustomerModal> existing = repository.findById(id);
         if (existing.isPresent()) {
             CustomerModal existingCustomer = existing.get();
-            // copy relevant fields
-            existingCustomer.setName(customer.getName()); // example, use real fields
-            existingCustomer.setEmail(customer.getEmail()); // update your fields accordingly
+            existingCustomer.setFirstName(customer.getFirstName());
+            existingCustomer.setLastName(customer.getLastName());
+            existingCustomer.setEmail(customer.getEmail());
+            existingCustomer.setPhone(customer.getPhone());
+            existingCustomer.setAddress(customer.getAddress());
+            existingCustomer.setImage(customer.getImage());
+            existingCustomer.setBirthDate(customer.getBirthDate());
             return repository.save(existingCustomer);
         }
-        return null; // or throw custom NotFoundException
+        return null;
     }
 
     @Override
