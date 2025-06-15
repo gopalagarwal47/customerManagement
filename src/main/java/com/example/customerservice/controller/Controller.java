@@ -73,4 +73,16 @@ public class Controller {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<List<CustomerModal>> getAll() {
+        return ResponseEntity.ok(customerService.getAllCustomers());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerModal> getById(@PathVariable Long id) {
+        CustomerModal customer = customerService.findById(id);
+        return  ResponseEntity.ok(customer);
+    }
+
+
 }
