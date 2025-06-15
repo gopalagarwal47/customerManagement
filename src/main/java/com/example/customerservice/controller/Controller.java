@@ -73,6 +73,7 @@ public class Controller {
         }
     }
 
+
     @GetMapping
     public ResponseEntity<List<CustomerModal>> getAll() {
         return ResponseEntity.ok(customerService.getAllCustomers());
@@ -83,6 +84,5 @@ public class Controller {
         CustomerModal customer = customerService.findById(id);
         return  ResponseEntity.ok(customer);
     }
-
 
 }
