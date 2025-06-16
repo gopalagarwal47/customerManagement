@@ -16,7 +16,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-
+// this is the get api
     @GetMapping
     public ResponseEntity<List<OrderModal>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
