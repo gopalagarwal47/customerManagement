@@ -1,10 +1,15 @@
 package com.example.customerservice.model;
 
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import com.example.customerservice.model.OrderModal;
 
 
 @Entity
@@ -26,6 +31,10 @@ import java.time.LocalDate;
     private String phone;
     private String address;
     private LocalDate birthDate;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<OrderModal> orders;
 
 }
 

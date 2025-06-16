@@ -28,10 +28,10 @@ public class CustomerService implements Serviceinterface{
     public List<CustomerModal> getAllCustomers() {
         return repository.findAllCustomers();
     }
+
     @Override
     public CustomerModal create(CustomerModal customer) {
-        repository.insertCustomer(customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getImage(), customer.getPhone(), customer.getAddress(), customer.getBirthDate());
-        return repository.findLatestInsertedCustomerByEmail(customer.getEmail());
+        return repository.save(customer);
     }
 
     @Override
