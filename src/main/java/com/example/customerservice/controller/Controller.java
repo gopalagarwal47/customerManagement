@@ -40,15 +40,13 @@ public class Controller {
             @RequestParam String email,
             @RequestParam String phone,
             @RequestParam String address,
-            @RequestParam String birthDate, // format: yyyy-MM-dd
+            @RequestParam String birthDate,
             @RequestParam MultipartFile image
     ) {
         try {
             if (image == null || image.isEmpty()) {
                 return ResponseEntity.badRequest().body(null);
             }
-
-            // Use a folder outside /resources/ to avoid packaging issues
             Path uploadPath = Paths.get("uploads/");
             Files.createDirectories(uploadPath);
 
@@ -68,7 +66,7 @@ public class Controller {
 
             return ResponseEntity.ok(customerService.create(customer));
         } catch (Exception e) {
-            e.printStackTrace(); // ⬅️ Helps you see the root cause
+
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -82,6 +80,9 @@ public class Controller {
     @GetMapping("/{id}")
     public ResponseEntity<CustomerModal> getById(@PathVariable Long id) {
         CustomerModal customer = customerService.findById(id);
+        if (customer != null) {
+            customer.getOrders().size();
+        }
         return  ResponseEntity.ok(customer);
     }
 
@@ -118,14 +119,14 @@ public class Controller {
                     .phone(phone)
                     .address(address)
                     .birthDate(LocalDate.parse(birthDate))
-                    .image(imagePath) // can be null
+                    .image(imagePath)
                     .build();
 
             CustomerModal updated = customerService.update(id, customer);
             return ResponseEntity.ok(updated);
 
         } catch (Exception e) {
-            e.printStackTrace();
+
             return ResponseEntity.internalServerError().build();
         }
     }
